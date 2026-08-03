@@ -96,7 +96,7 @@
             font-size: 13px;
             color: #666;
             margin-bottom: 12px;
-            display: block;
+            display: none;
         }
         
         .japanese-phrase {
@@ -115,6 +115,46 @@
         
         .kanji {
             color: #ef4444;
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dotted #ef4444;
+        }
+        
+        .kanji[data-hiragana]::after {
+            content: attr(data-hiragana);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #10b981;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+        
+        .kanji[data-hiragana]::before {
+            content: '';
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+        
+        .kanji[data-hiragana]:hover::after,
+        .kanji[data-hiragana]:hover::before {
+            opacity: 1;
         }
         
         .feedback {
@@ -247,16 +287,16 @@
     
     <script>
         const phrases = [
-            { hiragana: 'なんじですか', romaji: 'nanji desu ka', english: 'What time is it?', meaning: 'What time is it?' },
-            { hiragana: 'だれがここにいますか', romaji: 'dare ga koko ni imasu ka', english: 'Who is here?', meaning: 'Who is here?' },
-            { hiragana: 'といれはどこですか', romaji: 'toire wa doko desu ka', english: 'Where is the toilet?', meaning: 'Where is the toilet?' },
-            { hiragana: 'ごはんはいつですか', romaji: 'gohan wa itsu desu ka', english: 'When is dinner?', meaning: 'When is dinner?' },
-            { hiragana: 'なぜですか', romaji: 'naze desu ka', english: 'Why?', meaning: 'Why?' },
-            { hiragana: 'おげんきですか', romaji: 'o genki desu ka', english: 'How are you?', meaning: 'How are you?' },
-            { hiragana: 'どのくるまですか', romaji: 'dono kuruma desu ka', english: 'Which car?', meaning: 'Which car?' },
-            { hiragana: 'なんにんですか', romaji: 'nan nin desu ka', english: 'How many people?', meaning: 'How many people?' },
-            { hiragana: 'いくらですか', romaji: 'ikura desu ka', english: 'How much?', meaning: 'How much?' },
-            { hiragana: 'だれのですか', romaji: 'dare no desu ka', english: 'Whose is it?', meaning: 'Whose is it?' }
+            { hiragana: 'なんじですか', romaji: 'nanji desu ka', english: 'What time is it?', meaning: 'What time is it?', display: 'なんじですか' },
+            { hiragana: 'だれがここにいますか', romaji: 'dare ga koko ni imasu ka', english: 'Who is here?', meaning: 'Who is here?', display: 'だれがここにいますか' },
+            { hiragana: 'といれはどこですか', romaji: 'toire wa doko desu ka', english: 'Where is the toilet?', meaning: 'Where is the toilet?', display: 'トイレはどこですか' },
+            { hiragana: 'ごはんはいつですか', romaji: 'gohan wa itsu desu ka', english: 'When is dinner?', meaning: 'When is dinner?', display: 'ご飯はいつですか', kanji: { '飯': 'はん' } },
+            { hiragana: 'なぜですか', romaji: 'naze desu ka', english: 'Why?', meaning: 'Why?', display: 'なぜですか' },
+            { hiragana: 'おげんきですか', romaji: 'o genki desu ka', english: 'How are you?', meaning: 'How are you?', display: 'お元気ですか', kanji: { '元': 'げん', '気': 'き' } },
+            { hiragana: 'どのくるまですか', romaji: 'dono kuruma desu ka', english: 'Which car?', meaning: 'Which car?', display: 'どの車ですか', kanji: { '車': 'くるま' } },
+            { hiragana: 'なんにんですか', romaji: 'nan nin desu ka', english: 'How many people?', meaning: 'How many people?', display: '何人ですか', kanji: { '何': 'なん', '人': 'にん' } },
+            { hiragana: 'いくらですか', romaji: 'ikura desu ka', english: 'How much?', meaning: 'How much?', display: 'いくらですか' },
+            { hiragana: 'だれのですか', romaji: 'dare no desu ka', english: 'Whose is it?', meaning: 'Whose is it?', display: 'だれのですか' }
         ];
         
         let score = { correct: 0, incorrect: 0 };
@@ -265,11 +305,12 @@
         let currentPhrase = null;
         let answered = false;
         
-        function colorCodeKana(text) {
+        function colorCodeKana(text, kanjiMap = {}) {
             let html = '';
             for (let char of text) {
                 const code = char.charCodeAt(0);
                 let className = '';
+                let dataAttr = '';
                 
                 // Hiragana: U+3040 to U+309F
                 if (code >= 0x3040 && code <= 0x309F) {
@@ -284,10 +325,13 @@
                          (code >= 0x3400 && code <= 0x4DBF) ||
                          (code >= 0x20000 && code <= 0x2A6DF)) {
                     className = 'kanji';
+                    if (kanjiMap[char]) {
+                        dataAttr = ` data-hiragana="${kanjiMap[char]}"`;
+                    }
                 }
                 
                 if (className) {
-                    html += `<span class="${className}">${char}</span>`;
+                    html += `<span class="${className}"${dataAttr}>${char}</span>`;
                 } else {
                     html += char;
                 }
@@ -321,7 +365,9 @@
         function initQuestion() {
             currentPhrase = shuffledPhrases[currentIndex];
             answered = false;
-            document.getElementById('phrase').innerHTML = colorCodeKana(currentPhrase.hiragana);
+            const displayText = currentPhrase.display || currentPhrase.hiragana;
+            const kanjiMap = currentPhrase.kanji || {};
+            document.getElementById('phrase').innerHTML = colorCodeKana(displayText, kanjiMap);
             document.getElementById('english-prompt').textContent = currentPhrase.meaning;
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
