@@ -192,7 +192,49 @@
             border-radius: 8px;
             padding: 2rem;
             margin-bottom: 1.5rem;
+        }
+        
+        .question-content {
             text-align: center;
+        }
+        
+        .character-display-both {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            justify-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .character-column {
+            text-align: center;
+        }
+        
+        .character-column-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .character-symbol {
+            font-size: 72px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .character-display-single {
+            text-align: center;
+        }
+        
+        .question-character {
+            font-size: 72px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
         }
         
         .question-label {
@@ -352,9 +394,25 @@
             </div>
             
             <div class="question-display">
-                <div class="question-label">Which vowel?</div>
-                <div class="consonant-family-label" id="family-label">ka-family</div>
-                <div class="question-character" id="question-char">カ</div>
+                <div class="question-content">
+                    <div class="question-label">Which vowel?</div>
+                    <div class="consonant-family-label" id="family-label">ka-family</div>
+                    
+                    <div id="display-both" class="character-display-both" style="display: none;">
+                        <div class="character-column">
+                            <div class="character-column-label">Katakana</div>
+                            <div class="character-symbol" id="question-char-kata">カ</div>
+                        </div>
+                        <div class="character-column">
+                            <div class="character-column-label">Hiragana</div>
+                            <div class="character-symbol" id="question-char-hira">か</div>
+                        </div>
+                    </div>
+                    
+                    <div id="display-single" class="character-display-single">
+                        <div class="question-character" id="question-char">カ</div>
+                    </div>
+                </div>
             </div>
             
             <div class="feedback" id="feedback"></div>
@@ -417,6 +475,11 @@
             } else {
                 hiraganaBtn.classList.remove('active');
             }
+            
+            // If in quiz mode, update the display
+            if (selectedFamily) {
+                initQuestion();
+            }
         }
         
         function selectConsonant(key) {
@@ -467,21 +530,27 @@
             
             answered = false;
             
-            // Choose which script to display
-            let displayChar;
-            if (selectedScripts.has('katakana') && selectedScripts.has('hiragana')) {
-                // Random choice
-                displayChar = Math.random() < 0.5 ? family.katakana[idx] : family.hiragana[idx];
-            } else if (selectedScripts.has('katakana')) {
-                displayChar = family.katakana[idx];
-            } else {
-                displayChar = family.hiragana[idx];
-            }
-            
-            document.getElementById('question-char').textContent = displayChar;
             document.getElementById('family-label').textContent = family.label;
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
+            
+            // Handle script display
+            if (selectedScripts.has('katakana') && selectedScripts.has('hiragana')) {
+                // Show both scripts side-by-side
+                document.getElementById('display-both').style.display = 'grid';
+                document.getElementById('display-single').style.display = 'none';
+                document.getElementById('question-char-kata').textContent = family.katakana[idx];
+                document.getElementById('question-char-hira').textContent = family.hiragana[idx];
+            } else {
+                // Show only one script
+                document.getElementById('display-both').style.display = 'none';
+                document.getElementById('display-single').style.display = 'block';
+                if (selectedScripts.has('katakana')) {
+                    document.getElementById('question-char').textContent = family.katakana[idx];
+                } else {
+                    document.getElementById('question-char').textContent = family.hiragana[idx];
+                }
+            }
             
             const progressPercent = ((currentIndex + 1) / family.katakana.length) * 100;
             document.getElementById('progress-fill').style.width = progressPercent + '%';
