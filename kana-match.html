@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katakana/Hiragana Matching Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .title-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            flex: 1;
+        }
+        
+        .mode-toggle {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .mode-toggle:hover {
+            border-color: #999;
+        }
+        
+        .mode-toggle.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        .filter-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            border-color: #999;
+        }
+        
+        .filter-btn.active {
+            color: white;
+            border-color: currentColor;
+        }
+        
+        .filter-btn.vowel-group {
+            --color: #3b82f6;
+        }
+        
+        .filter-btn.vowel-group.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        
+        .filter-btn.consonant-group {
+            --color: #f59e0b;
+        }
+        
+        .filter-btn.consonant-group.active {
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+        
+        .filter-btn.secondary-group {
+            --color: #a855f7;
+        }
+        
+        .filter-btn.secondary-group.active {
+            background: #a855f7;
+            border-color: #a855f7;
+        }
+        
+        .filter-btn.tertiary-group {
+            --color: #10b981;
+        }
+        
+        .filter-btn.tertiary-group.active {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        
+        .filter-btn.phrase-group {
+            --color: #ef4444;
+        }
+        
+        .filter-btn.phrase-group.active {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+        
+        .score-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .score-card {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .score-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .question-section {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .question-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .question-character {
+            font-size: 72px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .question-romaji {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .feedback {
+            text-align: center;
+            height: 24px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+        
+        .feedback.correct-msg {
+            color: #10b981;
+        }
+        
+        .feedback.incorrect-msg {
+            color: #ef4444;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .option-btn {
+            padding: 16px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 32px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .option-btn.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+        
+        .option-btn.incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-color: #ef4444;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .action-btns button {
+            padding: 10px 24px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .action-btns button:hover {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .action-btns button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="title-section">
+            <h1>Script Matching Quiz</h1>
+            <button class="mode-toggle active" onclick="toggleMode()" id="mode-btn">Katakana → Hiragana</button>
+        </div>
+        
+        <div class="filter-section">
+            <div class="filter-label">Character Sets</div>
+            <div class="filter-buttons">
+                <button class="filter-btn vowel-group active" data-group="vowels" onclick="toggleGroup('vowels')">Vowels (5)</button>
+                <button class="filter-btn consonant-group active" data-group="consonants" onclick="toggleGroup('consonants')">1st Syllables (3)</button>
+                <button class="filter-btn secondary-group active" data-group="secondary" onclick="toggleGroup('secondary')">2nd Syllables (9)</button>
+                <button class="filter-btn tertiary-group active" data-group="tertiary" onclick="toggleGroup('tertiary')">3rd Syllables (1)</button>
+                <button class="filter-btn phrase-group active" data-group="phrases" onclick="toggleGroup('phrases')">Phrase Words (7)</button>
+            </div>
+        </div>
+        
+        <div class="score-display">
+            <div class="score-card">
+                <div class="score-label">Correct</div>
+                <div class="score-number" id="correct-score">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-label">Incorrect</div>
+                <div class="score-number" id="incorrect-score">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-label">Accuracy</div>
+                <div class="score-number" id="accuracy-score">—</div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1/25</div>
+        </div>
+        
+        <div class="question-section">
+            <div class="question-label" id="question-label">Find the matching Hiragana</div>
+            <div class="question-character" id="question-char">ア</div>
+            <div class="question-romaji" id="question-romaji">a</div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="options" id="options-container"></div>
+        
+        <div class="action-btns">
+            <button onclick="nextQuestion()">Next question</button>
+            <button onclick="resetQuiz()">Reset</button>
+        </div>
+    </div>
+    
+    <script>
+        const allCharacters = [
+            { katakana: 'ア', hiragana: 'あ', romaji: 'a', group: 'vowels' },
+            { katakana: 'イ', hiragana: 'い', romaji: 'i', group: 'vowels' },
+            { katakana: 'ウ', hiragana: 'う', romaji: 'u', group: 'vowels' },
+            { katakana: 'エ', hiragana: 'え', romaji: 'e', group: 'vowels' },
+            { katakana: 'オ', hiragana: 'お', romaji: 'o', group: 'vowels' },
+            { katakana: 'ナ', hiragana: 'な', romaji: 'na', group: 'consonants' },
+            { katakana: 'ダ', hiragana: 'だ', romaji: 'da', group: 'consonants' },
+            { katakana: 'ド', hiragana: 'ど', romaji: 'do', group: 'consonants' },
+            { katakana: 'ニ', hiragana: 'に', romaji: 'ni', group: 'secondary' },
+            { katakana: 'ン', hiragana: 'ん', romaji: 'n', group: 'secondary' },
+            { katakana: 'レ', hiragana: 'れ', romaji: 're', group: 'secondary' },
+            { katakana: 'コ', hiragana: 'こ', romaji: 'ko', group: 'secondary' },
+            { katakana: 'ツ', hiragana: 'つ', romaji: 'tsu', group: 'secondary' },
+            { katakana: 'ゼ', hiragana: 'ぜ', romaji: 'ze', group: 'secondary' },
+            { katakana: 'チ', hiragana: 'ち', romaji: 'chi', group: 'secondary' },
+            { katakana: 'ク', hiragana: 'く', romaji: 'ku', group: 'secondary' },
+            { katakana: 'ノ', hiragana: 'の', romaji: 'no', group: 'secondary' },
+            { katakana: 'ラ', hiragana: 'ら', romaji: 'ra', group: 'tertiary' },
+            { katakana: 'ジ', hiragana: 'じ', romaji: 'ji', group: 'phrases' },
+            { katakana: 'ト', hiragana: 'と', romaji: 'to', group: 'phrases' },
+            { katakana: 'デ', hiragana: 'で', romaji: 'de', group: 'phrases' },
+            { katakana: 'ル', hiragana: 'る', romaji: 'ru', group: 'phrases' },
+            { katakana: 'マ', hiragana: 'ま', romaji: 'ma', group: 'phrases' },
+            { katakana: 'キ', hiragana: 'き', romaji: 'ki', group: 'phrases' },
+            { katakana: 'モ', hiragana: 'も', romaji: 'mo', group: 'phrases' }
+        ];
+        
+        let score = { correct: 0, incorrect: 0 };
+        let selectedGroups = new Set(['vowels', 'consonants', 'secondary', 'tertiary', 'phrases']);
+        let shuffledCharacters = [];
+        let currentIndex = 0;
+        let currentChar = null;
+        let answered = false;
+        let mode = 'katakana-to-hiragana'; // 'katakana-to-hiragana' or 'hiragana-to-katakana'
+        
+        function toggleMode() {
+            if (mode === 'katakana-to-hiragana') {
+                mode = 'hiragana-to-katakana';
+                document.getElementById('mode-btn').textContent = 'Hiragana → Katakana';
+            } else {
+                mode = 'katakana-to-hiragana';
+                document.getElementById('mode-btn').textContent = 'Katakana → Hiragana';
+            }
+            resetQuiz();
+        }
+        
+        function toggleGroup(group) {
+            if (selectedGroups.has(group)) {
+                if (selectedGroups.size > 1) {
+                    selectedGroups.delete(group);
+                }
+            } else {
+                selectedGroups.add(group);
+            }
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const btnGroup = btn.getAttribute('data-group');
+                if (selectedGroups.has(btnGroup)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            resetQuiz();
+        }
+        
+        function shuffleArray(array) {
+            const filtered = array.filter(char => selectedGroups.has(char.group));
+            const shuffled = [...filtered];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function generateOptions(correctChar) {
+            const targetScript = mode === 'katakana-to-hiragana' ? 'hiragana' : 'katakana';
+            const options = [correctChar[targetScript]];
+            const allOptions = allCharacters.map(c => c[targetScript]);
+            
+            while (options.length < 4) {
+                const random = allOptions[Math.floor(Math.random() * allOptions.length)];
+                if (!options.includes(random)) {
+                    options.push(random);
+                }
+            }
+            
+            return options.sort(() => Math.random() - 0.5);
+        }
+        
+        function initQuestion() {
+            currentChar = shuffledCharacters[currentIndex];
+            answered = false;
+            
+            const sourceScript = mode === 'katakana-to-hiragana' ? 'katakana' : 'hiragana';
+            const targetScript = mode === 'katakana-to-hiragana' ? 'hiragana' : 'katakana';
+            const questionLabel = mode === 'katakana-to-hiragana' ? 'Find the matching Hiragana' : 'Find the matching Katakana';
+            
+            document.getElementById('question-label').textContent = questionLabel;
+            document.getElementById('question-char').textContent = currentChar[sourceScript];
+            document.getElementById('question-romaji').textContent = currentChar.romaji;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            const totalChars = shuffledCharacters.length;
+            const progressPercent = ((currentIndex + 1) / totalChars) * 100;
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+            document.getElementById('progress-text').textContent = (currentIndex + 1) + '/' + totalChars;
+            
+            const options = generateOptions(currentChar);
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option, btn);
+                btn.disabled = answered;
+                container.appendChild(btn);
+            });
+            
+            updateScore();
+        }
+        
+        function checkAnswer(selected, btn) {
+            if (answered) return;
+            answered = true;
+            
+            const targetScript = mode === 'katakana-to-hiragana' ? 'hiragana' : 'katakana';
+            const isCorrect = selected === currentChar[targetScript];
+            
+            if (isCorrect) {
+                score.correct++;
+                btn.classList.add('correct');
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('feedback').className = 'feedback correct-msg';
+            } else {
+                score.incorrect++;
+                btn.classList.add('incorrect');
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(b => {
+                    if (b.textContent === currentChar[targetScript]) {
+                        b.classList.add('correct');
+                    }
+                });
+                document.getElementById('feedback').textContent = `Incorrect. The answer is "${currentChar[targetScript]}"`;
+                document.getElementById('feedback').className = 'feedback incorrect-msg';
+            }
+            
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            updateScore();
+        }
+        
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= shuffledCharacters.length) {
+                currentIndex = 0;
+                shuffledCharacters = shuffleArray(allCharacters);
+            }
+            initQuestion();
+        }
+        
+        function resetQuiz() {
+            score = { correct: 0, incorrect: 0 };
+            currentIndex = 0;
+            shuffledCharacters = shuffleArray(allCharacters);
+            initQuestion();
+        }
+        
+        function updateScore() {
+            document.getElementById('correct-score').textContent = score.correct;
+            document.getElementById('incorrect-score').textContent = score.incorrect;
+            
+            const total = score.correct + score.incorrect;
+            if (total > 0) {
+                const accuracy = Math.round((score.correct / total) * 100);
+                document.getElementById('accuracy-score').textContent = accuracy + '%';
+            } else {
+                document.getElementById('accuracy-score').textContent = '—';
+            }
+        }
+        
+        shuffledCharacters = shuffleArray(allCharacters);
+        initQuestion();
+    </script>
+</body>
+</html>
