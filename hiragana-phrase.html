@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiragana Phrase Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        
+        .score-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .score-card {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .score-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .phrase-display {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .english-prompt {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            display: none;
+        }
+        
+        .japanese-phrase {
+            font-size: 48px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .feedback {
+            text-align: center;
+            height: 24px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+        
+        .feedback.correct-msg {
+            color: #10b981;
+        }
+        
+        .feedback.incorrect-msg {
+            color: #ef4444;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .option-btn {
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .option-btn.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+        
+        .option-btn.incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-color: #ef4444;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .action-btns button {
+            padding: 10px 24px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .action-btns button:hover {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .action-btns button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Hiragana Phrase Quiz</h1>
+        
+        <div class="score-display">
+            <div class="score-card">
+                <div class="score-label">Correct</div>
+                <div class="score-number" id="correct-score">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-label">Incorrect</div>
+                <div class="score-number" id="incorrect-score">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-label">Accuracy</div>
+                <div class="score-number" id="accuracy-score">—</div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="progress-text">1/10</div>
+        </div>
+        
+        <div class="phrase-display">
+            <div class="english-prompt" id="english-prompt">What time</div>
+            <div class="japanese-phrase" id="phrase">なんじ</div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="options" id="options-container"></div>
+        
+        <div class="action-btns">
+            <button onclick="nextQuestion()">Next phrase</button>
+            <button onclick="resetQuiz()">Reset</button>
+        </div>
+    </div>
+    
+    <script>
+        const phrases = [
+            { hiragana: 'なんじ', romaji: 'nanji', english: 'What time', meaning: 'what time' },
+            { hiragana: 'だれここ', romaji: 'dare koko', english: 'Who there', meaning: 'who is here' },
+            { hiragana: 'ところいれ', romaji: 'doko toile', english: 'Where bathroom', meaning: 'where is the bathroom' },
+            { hiragana: 'いつでぃなー', romaji: 'itsu dina', english: 'When dinner', meaning: 'when is dinner' },
+            { hiragana: 'なぜなく', romaji: 'naze naku', english: 'Why cry', meaning: 'why are you crying' },
+            { hiragana: 'どういる', romaji: 'dou iru', english: 'How feeling', meaning: 'how are you' },
+            { hiragana: 'どれくるま', romaji: 'dore kuruma', english: 'Which car', meaning: 'which car' },
+            { hiragana: 'いくつにん', romaji: 'ikutsu nin', english: 'How many people', meaning: 'how many people' },
+            { hiragana: 'いくらきん', romaji: 'ikura kin', english: 'How much money', meaning: 'how much money' },
+            { hiragana: 'だれのもの', romaji: 'dareno mono', english: 'Whose thing', meaning: 'whose is it' }
+        ];
+        
+        let score = { correct: 0, incorrect: 0 };
+        let shuffledPhrases = [];
+        let currentIndex = 0;
+        let currentPhrase = null;
+        let answered = false;
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        function generateOptions(correctPhrase) {
+            const options = [correctPhrase.english];
+            const allOptions = phrases.map(p => p.english);
+            
+            while (options.length < 4) {
+                const random = allOptions[Math.floor(Math.random() * allOptions.length)];
+                if (!options.includes(random)) {
+                    options.push(random);
+                }
+            }
+            
+            return options.sort(() => Math.random() - 0.5);
+        }
+        
+        function initQuestion() {
+            currentPhrase = shuffledPhrases[currentIndex];
+            answered = false;
+            document.getElementById('phrase').textContent = currentPhrase.hiragana;
+            document.getElementById('english-prompt').textContent = currentPhrase.meaning;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            const progressPercent = ((currentIndex + 1) / 10) * 100;
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+            document.getElementById('progress-text').textContent = (currentIndex + 1) + '/10';
+            
+            const options = generateOptions(currentPhrase);
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                const phraseObj = phrases.find(p => p.english === option);
+                btn.textContent = option + ' (' + phraseObj.romaji + ')';
+                btn.onclick = () => checkAnswer(option, btn);
+                btn.disabled = answered;
+                container.appendChild(btn);
+            });
+            
+            updateScore();
+        }
+        
+        function checkAnswer(selected, btn) {
+            if (answered) return;
+            answered = true;
+            
+            const isCorrect = selected === currentPhrase.english;
+            
+            if (isCorrect) {
+                score.correct++;
+                btn.classList.add('correct');
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('feedback').className = 'feedback correct-msg';
+            } else {
+                score.incorrect++;
+                btn.classList.add('incorrect');
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(b => {
+                    if (b.textContent.startsWith(currentPhrase.english)) {
+                        b.classList.add('correct');
+                    }
+                });
+                document.getElementById('feedback').textContent = `Incorrect. The answer is "${currentPhrase.english}"`;
+                document.getElementById('feedback').className = 'feedback incorrect-msg';
+            }
+            
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            updateScore();
+        }
+        
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= 10) {
+                currentIndex = 0;
+                shuffledPhrases = shuffleArray(phrases);
+            }
+            initQuestion();
+        }
+        
+        function resetQuiz() {
+            score = { correct: 0, incorrect: 0 };
+            currentIndex = 0;
+            shuffledPhrases = shuffleArray(phrases);
+            initQuestion();
+        }
+        
+        function updateScore() {
+            document.getElementById('correct-score').textContent = score.correct;
+            document.getElementById('incorrect-score').textContent = score.incorrect;
+            
+            const total = score.correct + score.incorrect;
+            if (total > 0) {
+                const accuracy = Math.round((score.correct / total) * 100);
+                document.getElementById('accuracy-score').textContent = accuracy + '%';
+            } else {
+                document.getElementById('accuracy-score').textContent = '—';
+            }
+        }
+        
+        shuffledPhrases = shuffleArray(phrases);
+        initQuestion();
+    </script>
+</body>
+</html>
