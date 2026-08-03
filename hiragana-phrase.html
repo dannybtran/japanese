@@ -96,13 +96,25 @@
             font-size: 13px;
             color: #666;
             margin-bottom: 12px;
-            display: none;
+            display: block;
         }
         
         .japanese-phrase {
             font-size: 48px;
             font-weight: 500;
             color: #333;
+        }
+        
+        .hiragana {
+            color: #10b981;
+        }
+        
+        .katakana {
+            color: #3b82f6;
+        }
+        
+        .kanji {
+            color: #ef4444;
         }
         
         .feedback {
@@ -219,8 +231,8 @@
         </div>
         
         <div class="phrase-display">
-            <div class="english-prompt" id="english-prompt">What time</div>
-            <div class="japanese-phrase" id="phrase">なんじ</div>
+            <div class="english-prompt" id="english-prompt">What time is it?</div>
+            <div class="japanese-phrase" id="phrase">なんじですか</div>
         </div>
         
         <div class="feedback" id="feedback"></div>
@@ -235,16 +247,16 @@
     
     <script>
         const phrases = [
-            { hiragana: 'なんじ', romaji: 'nanji', english: 'What time', meaning: 'what time' },
-            { hiragana: 'だれここ', romaji: 'dare koko', english: 'Who there', meaning: 'who is here' },
-            { hiragana: 'ところいれ', romaji: 'doko toile', english: 'Where bathroom', meaning: 'where is the bathroom' },
-            { hiragana: 'いつでぃなー', romaji: 'itsu dina', english: 'When dinner', meaning: 'when is dinner' },
-            { hiragana: 'なぜなく', romaji: 'naze naku', english: 'Why cry', meaning: 'why are you crying' },
-            { hiragana: 'どういる', romaji: 'dou iru', english: 'How feeling', meaning: 'how are you' },
-            { hiragana: 'どれくるま', romaji: 'dore kuruma', english: 'Which car', meaning: 'which car' },
-            { hiragana: 'いくつにん', romaji: 'ikutsu nin', english: 'How many people', meaning: 'how many people' },
-            { hiragana: 'いくらきん', romaji: 'ikura kin', english: 'How much money', meaning: 'how much money' },
-            { hiragana: 'だれのもの', romaji: 'dareno mono', english: 'Whose thing', meaning: 'whose is it' }
+            { hiragana: 'なんじですか', romaji: 'nanji desu ka', english: 'What time is it?', meaning: 'What time is it?' },
+            { hiragana: 'だれがここにいますか', romaji: 'dare ga koko ni imasu ka', english: 'Who is here?', meaning: 'Who is here?' },
+            { hiragana: 'といれはどこですか', romaji: 'toire wa doko desu ka', english: 'Where is the toilet?', meaning: 'Where is the toilet?' },
+            { hiragana: 'ごはんはいつですか', romaji: 'gohan wa itsu desu ka', english: 'When is dinner?', meaning: 'When is dinner?' },
+            { hiragana: 'なぜですか', romaji: 'naze desu ka', english: 'Why?', meaning: 'Why?' },
+            { hiragana: 'おげんきですか', romaji: 'o genki desu ka', english: 'How are you?', meaning: 'How are you?' },
+            { hiragana: 'どのくるまですか', romaji: 'dono kuruma desu ka', english: 'Which car?', meaning: 'Which car?' },
+            { hiragana: 'なんにんですか', romaji: 'nan nin desu ka', english: 'How many people?', meaning: 'How many people?' },
+            { hiragana: 'いくらですか', romaji: 'ikura desu ka', english: 'How much?', meaning: 'How much?' },
+            { hiragana: 'だれのですか', romaji: 'dare no desu ka', english: 'Whose is it?', meaning: 'Whose is it?' }
         ];
         
         let score = { correct: 0, incorrect: 0 };
@@ -252,6 +264,36 @@
         let currentIndex = 0;
         let currentPhrase = null;
         let answered = false;
+        
+        function colorCodeKana(text) {
+            let html = '';
+            for (let char of text) {
+                const code = char.charCodeAt(0);
+                let className = '';
+                
+                // Hiragana: U+3040 to U+309F
+                if (code >= 0x3040 && code <= 0x309F) {
+                    className = 'hiragana';
+                }
+                // Katakana: U+30A0 to U+30FF
+                else if (code >= 0x30A0 && code <= 0x30FF) {
+                    className = 'katakana';
+                }
+                // Kanji: U+4E00 to U+9FFF (and other ranges)
+                else if ((code >= 0x4E00 && code <= 0x9FFF) || 
+                         (code >= 0x3400 && code <= 0x4DBF) ||
+                         (code >= 0x20000 && code <= 0x2A6DF)) {
+                    className = 'kanji';
+                }
+                
+                if (className) {
+                    html += `<span class="${className}">${char}</span>`;
+                } else {
+                    html += char;
+                }
+            }
+            return html;
+        }
         
         function shuffleArray(array) {
             const shuffled = [...array];
@@ -279,7 +321,7 @@
         function initQuestion() {
             currentPhrase = shuffledPhrases[currentIndex];
             answered = false;
-            document.getElementById('phrase').textContent = currentPhrase.hiragana;
+            document.getElementById('phrase').innerHTML = colorCodeKana(currentPhrase.hiragana);
             document.getElementById('english-prompt').textContent = currentPhrase.meaning;
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
