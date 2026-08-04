@@ -1,0 +1,733 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vowel Family Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .quiz-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .filters-container {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .filter-row {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .script-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .script-btn {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .script-btn:hover {
+            border-color: #999;
+        }
+        
+        .script-btn.active {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+        
+        .mode-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .mode-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .vowel-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        
+        .vowel-btn {
+            padding: 12px 8px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .vowel-btn:hover {
+            border-color: #999;
+        }
+        
+        .vowel-btn.selected {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: white;
+        }
+        
+        .score-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .score-card {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .score-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .quiz-section.active {
+            display: block;
+        }
+        
+        .question-display {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-content {
+            text-align: center;
+        }
+        
+        .character-display-both {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            justify-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .character-column {
+            text-align: center;
+        }
+        
+        .character-column-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .character-symbol {
+            font-size: 72px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .character-display-single {
+            text-align: center;
+        }
+        
+        .question-character {
+            font-size: 72px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .question-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .vowel-label {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .feedback {
+            text-align: center;
+            height: 24px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+        
+        .feedback.correct-msg {
+            color: #10b981;
+        }
+        
+        .feedback.incorrect-msg {
+            color: #ef4444;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .option-btn {
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .option-btn.correct {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+        
+        .option-btn.incorrect {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-color: #ef4444;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .action-btns button {
+            padding: 10px 24px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .action-btns button:hover {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .action-btns button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Vowel Family Quiz</h1>
+        
+        <div class="filters-container">
+            <div class="filter-row">
+                <div class="filter-label">Display Script</div>
+                <div class="script-buttons">
+                    <button class="script-btn active" onclick="toggleScript('katakana')">Katakana</button>
+                    <button class="script-btn active" onclick="toggleScript('hiragana')">Hiragana</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mode-section">
+            <div class="mode-title">Select a Vowel</div>
+            <div class="vowel-grid" id="vowel-grid"></div>
+        </div>
+        
+        <div class="quiz-section active" id="selection-mode">
+            <div style="text-align: center; padding: 2rem; color: #999;">
+                Click a vowel above to begin
+            </div>
+        </div>
+        
+        <div class="quiz-section" id="quiz-mode">
+            <div class="score-display">
+                <div class="score-card">
+                    <div class="score-label">Correct</div>
+                    <div class="score-number" id="correct-score">0</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-label">Incorrect</div>
+                    <div class="score-number" id="incorrect-score">0</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-label">Accuracy</div>
+                    <div class="score-number" id="accuracy-score">—</div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-text" id="progress-text">1/14</div>
+            </div>
+            
+            <div class="question-display">
+                <div class="question-content">
+                    <div class="question-label">Which Consonant Family?</div>
+                    <div class="vowel-label" id="vowel-label">a-vowel</div>
+                    
+                    <div id="display-both" class="character-display-both" style="display: none;">
+                        <div class="character-column">
+                            <div class="character-column-label">Katakana</div>
+                            <div class="character-symbol" id="question-char-kata">カ</div>
+                        </div>
+                        <div class="character-column">
+                            <div class="character-column-label">Hiragana</div>
+                            <div class="character-symbol" id="question-char-hira">か</div>
+                        </div>
+                    </div>
+                    
+                    <div id="display-single" class="character-display-single">
+                        <div class="question-character" id="question-char">カ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="options" id="options-container"></div>
+            
+            <div class="action-btns">
+                <button onclick="nextQuestion()">Next</button>
+                <button onclick="backToSelection()">Back</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const consonantLabels = {
+            'ka': 'Ka',
+            'sa': 'Sa',
+            'ta': 'Ta',
+            'na': 'Na',
+            'ha': 'Ha',
+            'ma': 'Ma',
+            'ya': 'Ya',
+            'ra': 'Ra',
+            'wa': 'Wa',
+            'ga': 'Ga',
+            'za': 'Za',
+            'da': 'Da',
+            'ba': 'Ba',
+            'pa': 'Pa'
+        };
+        
+        const vowelFamilies = {
+            'a': {
+                label: 'a-vowel',
+                data: [
+                    { kata: 'カ', hira: 'か', consonant: 'ka' },
+                    { kata: 'サ', hira: 'さ', consonant: 'sa' },
+                    { kata: 'タ', hira: 'た', consonant: 'ta' },
+                    { kata: 'ナ', hira: 'な', consonant: 'na' },
+                    { kata: 'ハ', hira: 'は', consonant: 'ha' },
+                    { kata: 'マ', hira: 'ま', consonant: 'ma' },
+                    { kata: 'ヤ', hira: 'や', consonant: 'ya' },
+                    { kata: 'ラ', hira: 'ら', consonant: 'ra' },
+                    { kata: 'ワ', hira: 'わ', consonant: 'wa' },
+                    { kata: 'ガ', hira: 'が', consonant: 'ga' },
+                    { kata: 'ザ', hira: 'ざ', consonant: 'za' },
+                    { kata: 'ダ', hira: 'だ', consonant: 'da' },
+                    { kata: 'バ', hira: 'ば', consonant: 'ba' },
+                    { kata: 'パ', hira: 'ぱ', consonant: 'pa' }
+                ],
+                consonants: ['ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ya', 'ra', 'wa', 'ga', 'za', 'da', 'ba', 'pa']
+            },
+            'i': {
+                label: 'i-vowel',
+                data: [
+                    { kata: 'キ', hira: 'き', consonant: 'ka' },
+                    { kata: 'シ', hira: 'し', consonant: 'sa' },
+                    { kata: 'チ', hira: 'ち', consonant: 'ta' },
+                    { kata: 'ニ', hira: 'に', consonant: 'na' },
+                    { kata: 'ヒ', hira: 'ひ', consonant: 'ha' },
+                    { kata: 'ミ', hira: 'み', consonant: 'ma' },
+                    { kata: 'リ', hira: 'り', consonant: 'ra' },
+                    { kata: 'ギ', hira: 'ぎ', consonant: 'ga' },
+                    { kata: 'ジ', hira: 'じ', consonant: 'za' },
+                    { kata: 'ビ', hira: 'び', consonant: 'ba' },
+                    { kata: 'ピ', hira: 'ぴ', consonant: 'pa' }
+                ],
+                consonants: ['ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ra', 'ga', 'za', 'ba', 'pa']
+            },
+            'u': {
+                label: 'u-vowel',
+                data: [
+                    { kata: 'ク', hira: 'く', consonant: 'ka' },
+                    { kata: 'ス', hira: 'す', consonant: 'sa' },
+                    { kata: 'ツ', hira: 'つ', consonant: 'ta' },
+                    { kata: 'ヌ', hira: 'ぬ', consonant: 'na' },
+                    { kata: 'フ', hira: 'ふ', consonant: 'ha' },
+                    { kata: 'ム', hira: 'む', consonant: 'ma' },
+                    { kata: 'ユ', hira: 'ゆ', consonant: 'ya' },
+                    { kata: 'ル', hira: 'る', consonant: 'ra' },
+                    { kata: 'グ', hira: 'ぐ', consonant: 'ga' },
+                    { kata: 'ズ', hira: 'ず', consonant: 'za' },
+                    { kata: 'ブ', hira: 'ぶ', consonant: 'ba' },
+                    { kata: 'プ', hira: 'ぷ', consonant: 'pa' }
+                ],
+                consonants: ['ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ya', 'ra', 'ga', 'za', 'ba', 'pa']
+            },
+            'e': {
+                label: 'e-vowel',
+                data: [
+                    { kata: 'ケ', hira: 'け', consonant: 'ka' },
+                    { kata: 'セ', hira: 'せ', consonant: 'sa' },
+                    { kata: 'テ', hira: 'て', consonant: 'ta' },
+                    { kata: 'ネ', hira: 'ね', consonant: 'na' },
+                    { kata: 'ヘ', hira: 'へ', consonant: 'ha' },
+                    { kata: 'メ', hira: 'め', consonant: 'ma' },
+                    { kata: 'レ', hira: 'れ', consonant: 'ra' },
+                    { kata: 'ゲ', hira: 'げ', consonant: 'ga' },
+                    { kata: 'ゼ', hira: 'ぜ', consonant: 'za' },
+                    { kata: 'ベ', hira: 'べ', consonant: 'ba' },
+                    { kata: 'ペ', hira: 'ぺ', consonant: 'pa' }
+                ],
+                consonants: ['ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ra', 'ga', 'za', 'ba', 'pa']
+            },
+            'o': {
+                label: 'o-vowel',
+                data: [
+                    { kata: 'コ', hira: 'こ', consonant: 'ka' },
+                    { kata: 'ソ', hira: 'そ', consonant: 'sa' },
+                    { kata: 'ト', hira: 'と', consonant: 'ta' },
+                    { kata: 'ノ', hira: 'の', consonant: 'na' },
+                    { kata: 'ホ', hira: 'ほ', consonant: 'ha' },
+                    { kata: 'モ', hira: 'も', consonant: 'ma' },
+                    { kata: 'ヨ', hira: 'よ', consonant: 'yo' },
+                    { kata: 'ロ', hira: 'ろ', consonant: 'ra' },
+                    { kata: 'ゴ', hira: 'ご', consonant: 'ga' },
+                    { kata: 'ゾ', hira: 'ぞ', consonant: 'za' },
+                    { kata: 'ド', hira: 'ど', consonant: 'da' },
+                    { kata: 'ボ', hira: 'ぼ', consonant: 'bo' },
+                    { kata: 'ポ', hira: 'ぽ', consonant: 'po' }
+                ],
+                consonants: ['ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ya', 'ra', 'wa', 'ga', 'za', 'da', 'ba', 'pa']
+            }
+        };
+        
+        let selectedScripts = new Set(['katakana', 'hiragana']);
+        let selectedVowel = null;
+        let score = { correct: 0, incorrect: 0 };
+        let shuffledIndices = [];
+        let currentIndex = 0;
+        let answered = false;
+        
+        function toggleScript(script) {
+            if (selectedScripts.has(script)) {
+                if (selectedScripts.size > 1) {
+                    selectedScripts.delete(script);
+                }
+            } else {
+                selectedScripts.add(script);
+            }
+            
+            const katakanaBtn = document.querySelector('.script-btn:nth-of-type(1)');
+            const hiraganaBtn = document.querySelector('.script-btn:nth-of-type(2)');
+            
+            if (selectedScripts.has('katakana')) {
+                katakanaBtn.classList.add('active');
+            } else {
+                katakanaBtn.classList.remove('active');
+            }
+            
+            if (selectedScripts.has('hiragana')) {
+                hiraganaBtn.classList.add('active');
+            } else {
+                hiraganaBtn.classList.remove('active');
+            }
+            
+            if (selectedVowel) {
+                initQuestion();
+            }
+        }
+        
+        function selectVowel(vowel) {
+            selectedVowel = vowel;
+            const family = vowelFamilies[vowel];
+            
+            document.querySelectorAll('.vowel-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            score = { correct: 0, incorrect: 0 };
+            shuffledIndices = Array.from({length: family.data.length}, (_, i) => i);
+            for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+            }
+            currentIndex = 0;
+            
+            document.getElementById('selection-mode').classList.remove('active');
+            document.getElementById('quiz-mode').classList.add('active');
+            
+            initQuestion();
+        }
+        
+        function generateOptions(correctConsonant) {
+            const family = vowelFamilies[selectedVowel];
+            const options = [correctConsonant];
+            const allConsonants = family.consonants;
+            
+            while (options.length < 4) {
+                const random = allConsonants[Math.floor(Math.random() * allConsonants.length)];
+                if (!options.includes(random)) {
+                    options.push(random);
+                }
+            }
+            
+            return options.sort(() => Math.random() - 0.5);
+        }
+        
+        function initQuestion() {
+            const family = vowelFamilies[selectedVowel];
+            const idx = shuffledIndices[currentIndex];
+            const currentChar = family.data[idx];
+            const correctConsonant = currentChar.consonant;
+            
+            answered = false;
+            
+            document.getElementById('vowel-label').textContent = family.label;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            if (selectedScripts.has('katakana') && selectedScripts.has('hiragana')) {
+                document.getElementById('display-both').style.display = 'grid';
+                document.getElementById('display-single').style.display = 'none';
+                document.getElementById('question-char-kata').textContent = currentChar.kata;
+                document.getElementById('question-char-hira').textContent = currentChar.hira;
+            } else {
+                document.getElementById('display-both').style.display = 'none';
+                document.getElementById('display-single').style.display = 'block';
+                if (selectedScripts.has('katakana')) {
+                    document.getElementById('question-char').textContent = currentChar.kata;
+                } else {
+                    document.getElementById('question-char').textContent = currentChar.hira;
+                }
+            }
+            
+            const progressPercent = ((currentIndex + 1) / family.data.length) * 100;
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+            document.getElementById('progress-text').textContent = (currentIndex + 1) + '/' + family.data.length;
+            
+            const options = generateOptions(correctConsonant);
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = consonantLabels[option];
+                btn.onclick = () => checkAnswer(option, btn, correctConsonant);
+                btn.disabled = answered;
+                container.appendChild(btn);
+            });
+            
+            updateScore();
+        }
+        
+        function checkAnswer(selected, btn, correct) {
+            if (answered) return;
+            answered = true;
+            
+            const isCorrect = selected === correct;
+            
+            if (isCorrect) {
+                score.correct++;
+                btn.classList.add('correct');
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('feedback').className = 'feedback correct-msg';
+            } else {
+                score.incorrect++;
+                btn.classList.add('incorrect');
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(b => {
+                    if (b.textContent === consonantLabels[correct]) {
+                        b.classList.add('correct');
+                    }
+                });
+                document.getElementById('feedback').textContent = `Incorrect. The answer is "${consonantLabels[correct]}"`;
+                document.getElementById('feedback').className = 'feedback incorrect-msg';
+            }
+            
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            updateScore();
+        }
+        
+        function nextQuestion() {
+            const family = vowelFamilies[selectedVowel];
+            currentIndex++;
+            if (currentIndex >= family.data.length) {
+                currentIndex = 0;
+                shuffledIndices = Array.from({length: family.data.length}, (_, i) => i);
+                for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+                }
+            }
+            initQuestion();
+        }
+        
+        function backToSelection() {
+            document.getElementById('quiz-mode').classList.remove('active');
+            document.getElementById('selection-mode').classList.add('active');
+            document.querySelectorAll('.vowel-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+        
+        function updateScore() {
+            document.getElementById('correct-score').textContent = score.correct;
+            document.getElementById('incorrect-score').textContent = score.incorrect;
+            
+            const total = score.correct + score.incorrect;
+            if (total > 0) {
+                const accuracy = Math.round((score.correct / total) * 100);
+                document.getElementById('accuracy-score').textContent = accuracy + '%';
+            } else {
+                document.getElementById('accuracy-score').textContent = '—';
+            }
+        }
+        
+        function initVowelGrid() {
+            const grid = document.getElementById('vowel-grid');
+            ['a', 'i', 'u', 'e', 'o'].forEach(vowel => {
+                const btn = document.createElement('button');
+                btn.className = 'vowel-btn';
+                btn.textContent = vowel;
+                btn.onclick = (e) => selectVowel(vowel, e);
+                grid.appendChild(btn);
+            });
+        }
+        
+        initVowelGrid();
+    </script>
+</body>
+</html>
