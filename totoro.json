@@ -20,6 +20,33 @@
       "romaji": "kyarameru",
       "english": "Caramel",
       "kanji": {}
+    },
+    {
+      "id": 3,
+      "display": "ありがとう",
+      "hiragana": "ありがとう",
+      "romaji": "arigatou",
+      "english": "Thank you",
+      "kanji": {},
+      "notes": "polite/casual"
+    },
+    {
+      "id": 4,
+      "display": "くたびれたか",
+      "hiragana": "くたびれたか",
+      "romaji": "kutabireta ka",
+      "english": "Are you tired?",
+      "kanji": {},
+      "notes": "casual/informal/masculine/pedantic (father asking daughter)"
+    },
+    {
+      "id": 5,
+      "display": "くたびれましたか",
+      "hiragana": "くたびれましたか",
+      "romaji": "kutabiremashita ka",
+      "english": "Are you tired?",
+      "kanji": {},
+      "notes": "polite/formal version"
     }
   ]
 }
