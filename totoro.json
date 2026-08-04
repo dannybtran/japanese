@@ -1,0 +1,23 @@
+{
+  "title": "My Neighbor Totoro",
+  "phrases": [
+    {
+      "id": 1,
+      "display": "お父さん",
+      "hiragana": "おとうさん",
+      "romaji": "otousan",
+      "english": "Father",
+      "kanji": {
+        "父": "とう"
+      }
+    },
+    {
+      "id": 2,
+      "display": "キャラメル",
+      "hiragana": "きゃらめる",
+      "romaji": "kyarameru",
+      "english": "Caramel",
+      "kanji": {}
+    }
+  ]
+}
