@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -320,8 +321,11 @@
         }
         
         function colorCodeKana(text, kanjiMap = {}) {
+            console.log('colorCodeKana called with text:', text);
             let html = '';
+            let charCount = 0;
             for (let char of text) {
+                charCount++;
                 const code = char.charCodeAt(0);
                 let className = '';
                 let dataAttr = '';
@@ -350,6 +354,7 @@
                     html += char;
                 }
             }
+            console.log('colorCodeKana processed', charCount, 'characters, returning HTML');
             return html;
         }
         
@@ -377,12 +382,28 @@
         }
         
         function initQuestion() {
+            console.log('initQuestion called');
             currentPhrase = shuffledPhrases[currentIndex];
             answered = false;
             
+            console.log('Current phrase:', currentPhrase);
+            
             const displayText = currentPhrase.display || currentPhrase.hiragana;
+            console.log('Display text:', displayText);
+            
             const kanjiMap = currentPhrase.kanji || {};
-            document.getElementById('phrase').innerHTML = colorCodeKana(displayText, kanjiMap);
+            console.log('Kanji map:', kanjiMap);
+            
+            console.log('Calling colorCodeKana...');
+            const coloredHtml = colorCodeKana(displayText, kanjiMap);
+            console.log('colorCodeKana returned:', coloredHtml);
+            
+            const phraseElement = document.getElementById('phrase');
+            console.log('Phrase element:', phraseElement);
+            
+            phraseElement.innerHTML = coloredHtml;
+            console.log('innerHTML set');
+            
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
             
@@ -391,6 +412,8 @@
             document.getElementById('progress-text').textContent = (currentIndex + 1) + '/' + shuffledPhrases.length;
             
             const options = generateOptions(currentPhrase);
+            console.log('Generated options:', options);
+            
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
@@ -403,6 +426,7 @@
                 container.appendChild(btn);
             });
             
+            console.log('initQuestion complete');
             updateScore();
         }
         
