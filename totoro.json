@@ -1,5 +1,3 @@
----
----
 {
   "title": "My Neighbor Totoro",
   "phrases": [
@@ -46,6 +44,46 @@
       "romaji": "kutabiremashita ka",
       "english": "Are you tired?",
       "kanji": {},
+      "notes": "polite/formal version"
+    },
+    {
+      "id": 6,
+      "display": "もう じきだよ",
+      "hiragana": "もう じきだよ",
+      "romaji": "mou jikidayo",
+      "english": "It'll be soon / Soon",
+      "kanji": {},
+      "notes": "casual/informal/masculine (father speaking)"
+    },
+    {
+      "id": 7,
+      "display": "もう じきです",
+      "hiragana": "もう じきです",
+      "romaji": "mou jiki desu",
+      "english": "It'll be soon / Soon",
+      "kanji": {},
+      "notes": "polite/formal version"
+    },
+    {
+      "id": 8,
+      "display": "メイ、隠れて",
+      "hiragana": "メイ、かくれて",
+      "romaji": "Mei, kakurete",
+      "english": "Mei, hide!",
+      "kanji": {
+        "隠": "かく"
+      },
+      "notes": "casual/informal/direct command"
+    },
+    {
+      "id": 9,
+      "display": "メイ、隠れてください",
+      "hiragana": "メイ、かくれてください",
+      "romaji": "Mei, kakurete kudasai",
+      "english": "Mei, please hide!",
+      "kanji": {
+        "隠": "かく"
+      },
       "notes": "polite/formal version"
     }
   ]
