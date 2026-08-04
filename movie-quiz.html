@@ -466,11 +466,21 @@
         async function loadQuiz() {
             try {
                 const file = getMovieFile();
-                const response = await fetch(file);
+                console.log('Loading quiz file:', file);
+                
+                // Try to load the file with a timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(file, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
                 if (!response.ok) {
-                    throw new Error(`Failed to load ${file}`);
+                    throw new Error(`HTTP ${response.status}: Failed to load ${file}`);
                 }
+                
                 quizData = await response.json();
+                console.log('Quiz data loaded successfully:', quizData);
                 
                 document.getElementById('movie-title').textContent = quizData.title;
                 document.getElementById('loading-section').style.display = 'none';
@@ -479,9 +489,13 @@
                 shuffledPhrases = shuffleArray(quizData.phrases);
                 initQuestion();
             } catch (error) {
+                console.error('Error loading quiz:', error);
                 document.getElementById('loading-section').style.display = 'none';
                 document.getElementById('error-section').style.display = 'block';
-                document.getElementById('error-section').textContent = `Error: ${error.message}`;
+                const errorMsg = error.name === 'AbortError' 
+                    ? 'Timeout: took too long to load the quiz file' 
+                    : error.message;
+                document.getElementById('error-section').textContent = `Error: ${errorMsg}`;
             }
         }
         
