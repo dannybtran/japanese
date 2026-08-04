@@ -438,6 +438,17 @@
             'pa': 'Pa'
         };
         
+        function getConsonantWithVowel(consonant, vowel) {
+            const readings = {
+                'a': { 'ka': 'Ka', 'sa': 'Sa', 'ta': 'Ta', 'na': 'Na', 'ha': 'Ha', 'ma': 'Ma', 'ya': 'Ya', 'ra': 'Ra', 'wa': 'Wa', 'ga': 'Ga', 'za': 'Za', 'da': 'Da', 'ba': 'Ba', 'pa': 'Pa' },
+                'i': { 'ka': 'Ki', 'sa': 'Si', 'ta': 'Ti', 'na': 'Ni', 'ha': 'Hi', 'ma': 'Mi', 'ra': 'Ri', 'ga': 'Gi', 'za': 'Zi', 'ba': 'Bi', 'pa': 'Pi' },
+                'u': { 'ka': 'Ku', 'sa': 'Su', 'ta': 'Tu', 'na': 'Nu', 'ha': 'Fu', 'ma': 'Mu', 'ya': 'Yu', 'ra': 'Ru', 'ga': 'Gu', 'za': 'Zu', 'da': 'Du', 'ba': 'Bu', 'pa': 'Pu' },
+                'e': { 'ka': 'Ke', 'sa': 'Se', 'ta': 'Te', 'na': 'Ne', 'ha': 'He', 'ma': 'Me', 'ra': 'Re', 'ga': 'Ge', 'za': 'Ze', 'ba': 'Be', 'pa': 'Pe' },
+                'o': { 'ka': 'Ko', 'sa': 'So', 'ta': 'To', 'na': 'No', 'ha': 'Ho', 'ma': 'Mo', 'ya': 'Yo', 'ra': 'Ro', 'wa': 'Wo', 'ga': 'Go', 'za': 'Zo', 'da': 'Do', 'ba': 'Bo', 'pa': 'Po' }
+            };
+            return readings[vowel]?.[consonant] || consonantLabels[consonant];
+        }
+        
         const vowelFamilies = {
             'a': {
                 label: 'a-vowel',
@@ -644,7 +655,7 @@
             options.forEach(option => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.textContent = consonantLabels[option];
+                btn.textContent = getConsonantWithVowel(option, selectedVowel);
                 btn.onclick = () => checkAnswer(option, btn, correctConsonant);
                 btn.disabled = answered;
                 container.appendChild(btn);
@@ -669,11 +680,11 @@
                 btn.classList.add('incorrect');
                 const buttons = document.querySelectorAll('.option-btn');
                 buttons.forEach(b => {
-                    if (b.textContent === consonantLabels[correct]) {
+                    if (b.textContent === getConsonantWithVowel(correct, selectedVowel)) {
                         b.classList.add('correct');
                     }
                 });
-                document.getElementById('feedback').textContent = `Incorrect. The answer is "${consonantLabels[correct]}"`;
+                document.getElementById('feedback').textContent = `Incorrect. The answer is "${getConsonantWithVowel(correct, selectedVowel)}"`;
                 document.getElementById('feedback').className = 'feedback incorrect-msg';
             }
             
