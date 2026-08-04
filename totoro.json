@@ -85,6 +85,28 @@
         "隠": "かく"
       },
       "notes": "polite/formal version"
+    },
+    {
+      "id": 10,
+      "display": "おまわりさん",
+      "hiragana": "おまわりさん",
+      "romaji": "omawari-san",
+      "english": "Police officer",
+      "kanji": {},
+      "notes": "casual/colloquial/friendly; what you'd hear in everyday speech or from children"
+    },
+    {
+      "id": 11,
+      "display": "警察官",
+      "hiragana": "けいさつかん",
+      "romaji": "keisatsu-kan",
+      "english": "Police officer",
+      "kanji": {
+        "警": "けい",
+        "察": "さつ",
+        "官": "かん"
+      },
+      "notes": "formal/official; used in documents, news, and formal contexts"
     }
   ]
 }
