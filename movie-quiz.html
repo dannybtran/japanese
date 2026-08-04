@@ -371,7 +371,11 @@
             const options = [correctPhrase.english];
             const allOptions = quizData.phrases.map(p => p.english);
             
-            while (options.length < 4) {
+            // Determine how many options we can actually create
+            const maxOptions = Math.min(4, allOptions.length);
+            
+            // Add options until we reach the max
+            while (options.length < maxOptions) {
                 const random = allOptions[Math.floor(Math.random() * allOptions.length)];
                 if (!options.includes(random)) {
                     options.push(random);
