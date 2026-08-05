@@ -130,6 +130,25 @@
             font-weight: 500;
             color: #333;
             text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .translate-link {
+            text-align: center;
+            margin-top: 8px;
+        }
+        
+        .translate-link a {
+            font-size: 12px;
+            color: #3b82f6;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .translate-link a:hover {
+            color: #1e40af;
+            text-decoration: underline;
         }
         
         .hiragana {
@@ -333,6 +352,9 @@
             
             <div class="phrase-display">
                 <div class="japanese-phrase" id="phrase"></div>
+                <div class="translate-link">
+                    <a href="#" id="translate-link" target="_blank">Translate on Google</a>
+                </div>
             </div>
             
             <div class="feedback" id="feedback"></div>
@@ -461,6 +483,13 @@
             }
         }
         
+        function updateTranslateLink(japaneseText) {
+            const translateLink = document.getElementById('translate-link');
+            const encodedText = encodeURIComponent(japaneseText);
+            const googleTranslateUrl = `https://translate.google.com/?sl=ja&tl=en&text=${encodedText}&op=translate`;
+            translateLink.href = googleTranslateUrl;
+        }
+        
         function initQuestion() {
             console.log('initQuestion called');
             currentPhrase = shuffledPhrases[currentIndex];
@@ -483,6 +512,8 @@
             
             phraseElement.innerHTML = coloredHtml;
             console.log('innerHTML set');
+            
+            updateTranslateLink(displayText);
             
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
